@@ -43,5 +43,38 @@ fn main(){
     if let Err(e) = connection() {
         eprintln!("Error establishing connection: {}", e);
     }
+
+    loop {
+        println!("\nOptions:");
+        println!("1. Create task");
+        println!("2. View tasks");
+        println!("3. Update task");
+        println!("4. Delete task");
+        println!("5. Display incomplete tasks");
+        println!("6. Exit");
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("Failed to read line");
+        let choice: usize = match input.trim().parse() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("Invalid input. Please enter a number.");
+                continue;
+            }
+        };
+
+        match choice {
+            1 => createData(),
+            2 => viewData(),
+            3 => updateData(),
+            4 => deleteData(),
+            5 => viewIncompleteTasks(),
+            6 => {
+                println!("Exiting program.");
+                break;
+            }
+            _ => println!("Invalid choice. Please try again."),
+        }
+    }
     
 }
