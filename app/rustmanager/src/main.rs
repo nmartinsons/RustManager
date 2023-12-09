@@ -10,31 +10,31 @@ fn connection() -> Result<()>{
 
 
 //ability to create tasks
-fn createData(){
+fn create_data(){
     
 }
 
 
 //ability to view tasks
-fn viewData(){
+fn view_data(){
     
 }
 
 
 //ability to update data
-fn updateData(){
+fn update_data(){
     
 }
 
 
 //ability to delete data
-fn deleteData(){
+fn delete_data(){
     
 }
 
 
 //ablity to see number of incomplete tasks
-fn viewIncompleteTasks(){
+fn view_incomplete_tasks(){
 
 }
 
@@ -64,11 +64,11 @@ fn main(){
         };
 
         match choice {
-            1 => createData(),
-            2 => viewData(),
-            3 => updateData(),
-            4 => deleteData(),
-            5 => viewIncompleteTasks(),
+            1 => create_data(),
+            2 => view_data(),
+            3 => update_data(),
+            4 => delete_data(),
+            5 => view_incomplete_tasks(),
             6 => {
                 println!("Exiting program.");
                 break;
