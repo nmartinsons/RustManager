@@ -11,7 +11,7 @@ fn connection() -> Result<()>{
 struct Task {
     title: String,
     description: String,
-    due_date: Date,
+    due_date: String,
     priority: Int,
     status: String,
 }
