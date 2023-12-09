@@ -8,6 +8,14 @@ fn connection() -> Result<()>{
     Ok(())
 }
 
+struct Task {
+    title: String,
+    description: String,
+    due_date: Date,
+    priority: Int,
+    status: String,
+}
+
 
 //ability to create tasks
 fn create_data(){
