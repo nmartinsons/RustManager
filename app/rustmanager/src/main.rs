@@ -59,7 +59,6 @@ fn view_data(conn: &Connection) -> Result<()>{
 
 
 //ability to update data
-//ability to update data
 fn update_data(conn: &Connection) -> Result<()> {
     
 }
