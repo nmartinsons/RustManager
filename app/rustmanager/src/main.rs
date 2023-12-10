@@ -60,10 +60,77 @@ fn view_data(conn: &Connection) -> Result<()>{
 
 //ability to update data
 fn update_data(conn: &Connection) -> Result<()> {
-    
+    // Ask for the title of the task to update
+    println!("Enter the title of the task to update: ");
+    let mut input_title = String::new();
+    let _ = io::stdin().read_line(&mut input_title);
+
+    // Fetch the existing task details using LIKE
+    let mut stmt = conn.prepare("SELECT title, description, due_date, priority, status FROM tasks WHERE title LIKE ?1")?;
+    let existing_task = stmt.query_row([format!("%{}%", input_title.trim())], |row| {
+        Ok(Task {
+            title: row.get(0)?,
+            description: row.get(1)?,
+            due_date: row.get(2)?,
+            priority: row.get(3)?,
+            status: row.get(4)?,
+        })
+    });
+
+    // If the task is found, ask for updated details
+    if let Ok(existing_task) = existing_task {
+        println!("Enter updated task details:");
+
+        let mut updated_task = Task {
+            title: existing_task.title,
+            description: existing_task.description,
+            due_date: existing_task.due_date,
+            priority: existing_task.priority,
+            status: existing_task.status,
+        };
+
+        print!("Title: ");
+        let _ = io::stdout().flush();
+        let _ = io::stdin().read_line(&mut updated_task.title);
+
+        print!("Description: ");
+        let _ = io::stdout().flush();
+        let _ = io::stdin().read_line(&mut updated_task.description);
+
+        print!("Due Date: ");
+        let _ = io::stdout().flush();
+        let _ = io::stdin().read_line(&mut updated_task.due_date);
+
+        print!("Priority: ");
+        let _ = io::stdout().flush();
+        let mut priority = String::new();
+        let _ = io::stdin().read_line(&mut priority);
+        updated_task.priority = priority.trim().parse().unwrap_or(existing_task.priority);
+
+        print!("Status: ");
+        let _ = io::stdout().flush();
+        let _ = io::stdin().read_line(&mut updated_task.status);
+
+        // Update the task in the database using LIKE
+        conn.execute(
+            "UPDATE tasks SET title = ?1, description = ?2, due_date = ?3, priority = ?4, status = ?5 WHERE title = ?6",
+            &[
+                &updated_task.title,
+                &updated_task.description,
+                &updated_task.due_date,
+                &updated_task.priority.to_string(),
+                &updated_task.status,
+                &input_title.trim().to_string(),
+            ],
+        )?;
+
+        println!("\nTask updated successfully!");
+    } else {
+        println!("\nTask not found. No updates performed.");
+    }
+
+    Ok(())
 }
-
-
 
 
 //ability to delete data
