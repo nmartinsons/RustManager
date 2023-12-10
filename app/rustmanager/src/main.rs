@@ -30,8 +30,30 @@ fn create_data(conn: &Connection, task: &Task) -> Result<()> {
 
 
 //ability to view tasks
-fn view_data(){
-    println!("Tasks:");
+fn view_data(conn: &Connection) -> Result<()>{
+    let mut stmt = conn.prepare("SELECT title, description, due_date, priority, status FROM tasks")?;
+    let task_iter = stmt.query_map([], |row| {
+        Ok((
+            row.get::<usize, String>(0)?,
+            row.get::<usize, String>(1)?,
+            row.get::<usize, String>(2)?,
+            row.get::<usize, i32>(3)?,
+            row.get::<usize, String>(4)?,
+        ))
+    })?;
+
+    println!("\nTasks:\n");
+    for task in task_iter {
+        if let Ok((title, description, due_date, priority, status)) = task {
+            print!("Title: {}", title);
+            print!("Description: {}", description);
+            print!("Due Date: {}", due_date);
+            print!("Priority: {}", priority);
+            print!("\nStatus: {}\n", status);
+        }
+    }
+
+    Ok(())
     
 }
 
@@ -67,7 +89,7 @@ fn main()-> Result<()>{
         println!("6. Exit");
 
         let mut input = String::new();
-        io::stdin().read_line(&mut input);
+        let _ = io::stdin().read_line(&mut input);
         let choice: usize = match input.trim().parse() {
             Ok(num) => num,
             Err(_) => {
@@ -113,7 +135,7 @@ fn main()-> Result<()>{
 
                 create_data(&conn, &task)?;
             }
-            2 => view_data(),
+            2 => view_data(&conn)?,
             3 => update_data(),
             4 => delete_data(),
             5 => view_incomplete_tasks(),
