@@ -65,9 +65,21 @@ fn update_data(){
 
 
 //ability to delete data
-fn delete_data(){
-    
+fn delete_data(conn: &Connection) -> Result<()> {
+    println!("Enter the title of the task to delete: ");
+    let mut input_title = String::new();
+    let _ = io::stdin().read_line(&mut input_title);
+
+    // Trim the input_title to remove leading/trailing whitespaces
+    let input_title = input_title.trim();
+
+    // Delete the task
+    conn.execute("DELETE FROM tasks WHERE title LIKE ?1", &[&format!("%{}%", input_title)])?;
+    println!("Task with title '{}' deleted successfully!", input_title);
+
+    Ok(())
 }
+
 
 
 //ablity to see number of incomplete tasks
@@ -160,7 +172,7 @@ fn main()-> Result<()>{
             }
             2 => view_data(&conn)?,
             3 => update_data(),
-            4 => delete_data(),
+            4 => delete_data(&conn)?,
             5 => view_incomplete_tasks(&conn)?,
             6 => {
                 println!("Exiting program.");
