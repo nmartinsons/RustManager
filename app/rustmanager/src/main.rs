@@ -29,8 +29,6 @@ fn create_data(conn: &Connection, task: &Task) -> Result<()> {
 }
 
 
-
-
 //ability to view tasks
 fn view_data(){
     println!("Tasks:");
@@ -69,7 +67,7 @@ fn main()-> Result<()>{
         println!("6. Exit");
 
         let mut input = String::new();
-        io::stdin().read_line(&mut input).expect("Failed to read line");
+        io::stdin().read_line(&mut input);
         let choice: usize = match input.trim().parse() {
             Ok(num) => num,
             Err(_) => {
@@ -91,26 +89,26 @@ fn main()-> Result<()>{
                 println!("Enter task details:");
 
                 print!("Title: ");
-                io::stdout().flush().expect("Failed to flush output");
-                io::stdin().read_line(&mut task.title).expect("Failed to read line");;
+                let _ = io::stdout().flush();
+                let _ = io::stdin().read_line(&mut task.title);
 
                 print!("Description: ");
-                io::stdout().flush().expect("Failed to flush output");
-                io::stdin().read_line(&mut task.description).expect("Failed to read line");
+                let _  = io::stdout().flush();
+                let _ = io::stdin().read_line(&mut task.description);
 
                 print!("Due Date: ");
-                io::stdout().flush().expect("Failed to flush output");
-                io::stdin().read_line(&mut task.due_date).expect("Failed to read line");
+                let _  = io::stdout().flush();
+                let _ = io::stdin().read_line(&mut task.due_date);
 
                 print!("Priority: ");
-                io::stdout().flush().expect("Failed to flush output");
+                let _  = io::stdout().flush();
                 let mut priority = String::new();
-                io::stdin().read_line(&mut priority).expect("Failed to read line");
+                let _ = io::stdin().read_line(&mut priority);
                 task.priority = priority.trim().parse().unwrap_or(0);
 
                 print!("Status: ");
-                io::stdout().flush().expect("Failed to flush output");
-                io::stdin().read_line(&mut task.status).expect("Failed to read line");
+                let _  = io::stdout().flush();
+                let _ = io::stdin().read_line(&mut task.status);
 
 
                 create_data(&conn, &task)?;
