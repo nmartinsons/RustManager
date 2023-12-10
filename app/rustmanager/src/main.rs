@@ -71,7 +71,30 @@ fn delete_data(){
 
 
 //ablity to see number of incomplete tasks
-fn view_incomplete_tasks(){
+fn view_incomplete_tasks(conn: &Connection) -> Result<()>{
+    let mut stmt = conn.prepare("SELECT title, description, due_date, priority, status FROM tasks WHERE status LIKE '%incomplete%'")?;
+    let task_iter = stmt.query_map([], |row| {
+        Ok((
+            row.get::<usize, String>(0)?,
+            row.get::<usize, String>(1)?,
+            row.get::<usize, String>(2)?,
+            row.get::<usize, i32>(3)?,
+            row.get::<usize, String>(4)?,
+        ))
+    })?;
+
+    println!("\nTasks:\n");
+    for task in task_iter {
+        if let Ok((title, description, due_date, priority, status)) = task {
+            print!("Title: {}", title);
+            print!("Description: {}", description);
+            print!("Due Date: {}", due_date);
+            print!("Priority: {}", priority);
+            print!("\nStatus: {}\n", status);
+        }
+    }
+
+    Ok(())
 
 }
 
@@ -108,7 +131,7 @@ fn main()-> Result<()>{
                     status: String::new(),
                 };
 
-                println!("Enter task details:");
+                println!("\nEnter task details:");
 
                 print!("Title: ");
                 let _ = io::stdout().flush();
@@ -138,7 +161,7 @@ fn main()-> Result<()>{
             2 => view_data(&conn)?,
             3 => update_data(),
             4 => delete_data(),
-            5 => view_incomplete_tasks(),
+            5 => view_incomplete_tasks(&conn)?,
             6 => {
                 println!("Exiting program.");
                 break Ok(());
