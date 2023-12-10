@@ -1,30 +1,39 @@
 use rusqlite::{Connection, Result};
-use std::io;
+use std::io::{self, Write};
 
 
-fn connection() -> Result<()>{
+fn connection() -> Result<Connection>{
     let _conn = Connection::open("RustData.db")?;
     println!("Connection established successfully!");
-    Ok(())
+    Ok(_conn)
 }
 
 struct Task {
     title: String,
     description: String,
     due_date: String,
-    priority: Int,
+    priority: i32,
     status: String,
 }
 
 
 //ability to create tasks
-fn create_data(){
-    
+fn create_data(conn: &Connection, task: &Task) -> Result<()> {
+    conn.execute(
+        "INSERT INTO tasks (title, description, due_date, priority, status) VALUES (?1, ?2, ?3, ?4, ?5)",
+        &[&task.title, &task.description, &task.due_date, &task.priority.to_string(), &task.status],
+    )?;
+
+    println!("Task created successfully!");
+    Ok(())
 }
+
+
 
 
 //ability to view tasks
 fn view_data(){
+    println!("Tasks:");
     
 }
 
@@ -47,10 +56,8 @@ fn view_incomplete_tasks(){
 }
 
 
-fn main(){
-    if let Err(e) = connection() {
-        eprintln!("Error establishing connection: {}", e);
-    }
+fn main()-> Result<()>{
+    let conn = connection()?;
 
     loop {
         println!("\nOptions:");
@@ -72,17 +79,52 @@ fn main(){
         };
 
         match choice {
-            1 => create_data(),
+            1 => {
+                let mut task = Task {
+                    title: String::new(),
+                    description: String::new(),
+                    due_date: String::new(),
+                    priority: 0,
+                    status: String::new(),
+                };
+
+                println!("Enter task details:");
+
+                print!("Title: ");
+                io::stdout().flush().expect("Failed to flush output");
+                io::stdin().read_line(&mut task.title).expect("Failed to read line");;
+
+                print!("Description: ");
+                io::stdout().flush().expect("Failed to flush output");
+                io::stdin().read_line(&mut task.description).expect("Failed to read line");
+
+                print!("Due Date: ");
+                io::stdout().flush().expect("Failed to flush output");
+                io::stdin().read_line(&mut task.due_date).expect("Failed to read line");
+
+                print!("Priority: ");
+                io::stdout().flush().expect("Failed to flush output");
+                let mut priority = String::new();
+                io::stdin().read_line(&mut priority).expect("Failed to read line");
+                task.priority = priority.trim().parse().unwrap_or(0);
+
+                print!("Status: ");
+                io::stdout().flush().expect("Failed to flush output");
+                io::stdin().read_line(&mut task.status).expect("Failed to read line");
+
+
+                create_data(&conn, &task)?;
+            }
             2 => view_data(),
             3 => update_data(),
             4 => delete_data(),
             5 => view_incomplete_tasks(),
             6 => {
                 println!("Exiting program.");
-                break;
+                break Ok(());
             }
             _ => println!("Invalid choice. Please try again."),
         }
+
     }
-    
 }
