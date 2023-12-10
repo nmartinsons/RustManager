@@ -138,10 +138,10 @@ fn delete_data(conn: &Connection) -> Result<()> {
     let mut input_title = String::new();
     let _ = io::stdin().read_line(&mut input_title);
 
-    // Trim the input_title to remove leading/trailing whitespaces
+    //trim the input_title to remove leading/trailing whitespaces
     let input_title = input_title.trim();
 
-    // Delete the task
+    //delete the task
     conn.execute("DELETE FROM tasks WHERE title LIKE ?1", &[&format!("%{}%", input_title)])?;
     println!("Task with title '{}' deleted successfully!", input_title);
 
