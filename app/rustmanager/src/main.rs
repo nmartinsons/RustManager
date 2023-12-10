@@ -60,7 +60,7 @@ fn view_data(conn: &Connection) -> Result<()>{
 
 //ability to update data
 fn update_data(conn: &Connection) -> Result<()> {
-    // Ask for the title of the task to update
+    //ask for the title of the task to update
     println!("Enter the title of the task to update: ");
     let mut input_title = String::new();
     let _ = io::stdin().read_line(&mut input_title);
@@ -77,7 +77,7 @@ fn update_data(conn: &Connection) -> Result<()> {
         })
     });
 
-    // If the task is found, ask for updated details
+    //if the task is found, ask for updated details
     if let Ok(existing_task) = existing_task {
         println!("Enter updated task details:");
 
@@ -111,7 +111,6 @@ fn update_data(conn: &Connection) -> Result<()> {
         let _ = io::stdout().flush();
         let _ = io::stdin().read_line(&mut updated_task.status);
 
-        // Update the task in the database using LIKE
         conn.execute(
             "UPDATE tasks SET title = ?1, description = ?2, due_date = ?3, priority = ?4, status = ?5 WHERE title = ?6",
             &[
